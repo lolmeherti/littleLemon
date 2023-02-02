@@ -5,13 +5,17 @@
 //  Created by Alex H. on 31.01.23.
 //
 
-let keyFirstName = "key for first name"
-let keyLastName = "key for last name"
-let keyEmail = "key for email"
+let keyFirstName = "FirstName"
+let keyLastName = "LastName"
+let keyEmail = "Email"
+
+let keyIsLoggedIn = "isLoggedIn"
 
 import SwiftUI
 
 struct Onboarding: View {
+    
+    @Environment(\.presentationMode) var presentation
     
     @State var isLoggedIn = false
     
@@ -20,19 +24,15 @@ struct Onboarding: View {
     @State var email = "asd@asd.com"
     
     var body: some View {
-        NavigationStack
+        NavigationView
         {
-            if(isLoggedIn)
-            {
-                
-                NavigationLink(value: Navigation.home) {
-                    Home()
-                        .navigationTitle(Navigation.home.rawValue)
-                }
-                
-            } else {
+            
                 VStack
                 {
+                    
+                    NavigationLink("", destination: Home(), isActive: $isLoggedIn)
+                        .hidden()
+                    
                     Form
                     {
                         Section
@@ -49,10 +49,11 @@ struct Onboarding: View {
                                    !lastName.isEmpty &&
                                    email.isEmail())
                                 {
-                                    isLoggedIn.toggle()
                                     UserDefaults.standard.set(firstName, forKey: keyFirstName)
                                     UserDefaults.standard.set(lastName, forKey: keyLastName)
                                     UserDefaults.standard.set(email, forKey: keyEmail)
+                                    UserDefaults.standard.set(true, forKey: keyIsLoggedIn)
+                                    isLoggedIn = true
                                 } else {
                                     //form data  was incorrect
                                     print("bad form data")
@@ -60,8 +61,8 @@ struct Onboarding: View {
                             }
                         }
                     }
+                    
                     .navigationTitle("Registration")
-                }
             }
         }
     }
