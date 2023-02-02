@@ -9,19 +9,21 @@ import SwiftUI
 
 struct Menu: View {
     var body: some View {
-        
-        VStack
-        {
-            Text("Little Lemon")
-            Text("Chicago")
-            Text("Welcome to the little lemon restaurant app. Order food with ease!")
-            
-            List
+        NavigationView{
+            VStack
             {
+                Text("Little Lemon")
+                Text("Chicago")
+                Text("Welcome to the little lemon restaurant app. Order food with ease!")
                 
+                List
+                {
+                    
+                }
             }
+
         }
-       
+        
     }
 }
 
