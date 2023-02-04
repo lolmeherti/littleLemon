@@ -21,7 +21,7 @@ struct UserProfile: View {
             {
                 Text("Personal Information")
                 
-                Image("Placeholder")
+                Image("Profile")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .clipShape(Circle())
