@@ -11,28 +11,48 @@ import CoreData
 struct Menu: View {
     @Environment(\.managedObjectContext) private var viewContext
     
+    @State private var searchText = ""
+    @State private var showSearchField = false
+    @State private var filter = ""
+    
     var body: some View {
         
         NavigationView{
             VStack
             {
-                Text("Little Lemon")
-                Text("Chicago")
-                Text("Welcome to the little lemon restaurant app. Order food with ease!")
+                //MARK: banner
+                LittleLemonModal()
+                if showSearchField {
+                    TextField("Search", text: $searchText)
+                        .padding(10)
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(8)
+                        .onDisappear {
+                            self.showSearchField = false
+                        }
+                } else {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundColor(.gray)
+                        .onTapGesture {
+                            self.showSearchField.toggle()
+                        }
+                }
                 
-                FetchedObjects() { (dishes: [Dish]) in
+                
+                FetchedObjects(predicate: buildPredicate(),
+                               sortDescriptors: buildSortDescriptors())
+                { (dishes: [Dish]) in
+                    
+                    //MARK: dynamically getting categories from Core Data
+                    Categories(categories: getCategories(), filter: $filter)
+                    
                     List
                     {
-                        
                         ForEach(dishes){dish in
-                            HStack
-                            {
-                                Text(dish.title ?? "N/A")
-                                Text(dish.price ?? "N/A")
-                                Text(dish.dishDescription ?? "N/A")
-                            }
+                                MenuItemRow(dish: dish)
                         }
                     }
+                    .listStyle(PlainListStyle())
                 }
                 
                 .onAppear{
@@ -40,7 +60,44 @@ struct Menu: View {
                 }
                 
             }
+            .background(
+                    Color.clear.onTapGesture {
+                        self.showSearchField = false
+                    }
+                )
+            .animation(.default)
             
+        }
+    }
+    
+    func getCategories() -> [String] {
+        let fetchRequest: NSFetchRequest<Dish> = Dish.fetchRequest()
+        
+        do {
+            let dishes = try viewContext.fetch(fetchRequest)
+            let categories = dishes.map { $0.value(forKey: "category") as! String }
+            return categories
+        } catch let error as NSError {
+            print("Fetch error: \(error), \(error.userInfo)")
+        }
+        
+        return []
+    }
+    
+    func buildSortDescriptors() -> [NSSortDescriptor] {
+        return [NSSortDescriptor(key: "title",
+                                 ascending: true,
+                                 selector: #selector(NSString.localizedStandardCompare))]
+    }
+    
+    func buildPredicate() -> NSPredicate {
+        if filter.isEmpty {
+            if searchText.isEmpty {
+                return NSPredicate(value: true)
+            }
+            return NSPredicate(format: "title CONTAINS[cd] %@", searchText)
+        } else {
+            return NSPredicate(format: "category = %@", filter)
         }
     }
     
@@ -72,12 +129,12 @@ struct Menu: View {
                 let results = try? decoder.decode(MenuList.self, from: data)
                 
                 if let results = results {
-                    print("we decoded some data")
+                    print("we decoded data")
                     for item in results.menu {
                         
                         //MARK: making sure to not save duplicates
                         let exists = exists(in: viewContext, attributeValue: item.title)
-                    
+                        
                         if(exists)
                         {
                             print("skipped existing item")
@@ -92,14 +149,13 @@ struct Menu: View {
                         dish.dishDescription = item.description
                         try? viewContext.save()
                         
-                        print("we tried to save a menu item")
+                        print("we saved a menu item")
                     }
                 }
             }
         }
         urlSession.resume()
     }
-    
 }
 
 struct Menu_Previews: PreviewProvider {
