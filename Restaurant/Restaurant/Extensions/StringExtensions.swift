@@ -18,9 +18,3 @@ extension String {
         return __emailPredicate.evaluate(with: self)
     }
 }
-
-extension UITextField {
-    func isEmail() -> Bool {
-        return self.text?.isEmail() ?? false
-    }
-}

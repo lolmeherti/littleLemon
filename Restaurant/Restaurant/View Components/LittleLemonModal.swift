@@ -38,11 +38,7 @@ struct LittleLemonModal: View {
                            .cornerRadius(15)
                            .shadow(radius: 10)
                            .padding(.leading, 15)
-                        
-                        
                 }
-                
-                
             }
             .padding(15)
             
