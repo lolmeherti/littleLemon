@@ -20,7 +20,7 @@ struct Menu: View {
         NavigationView{
             VStack
             {
-                //MARK: banner
+                //MARK: banner modal
                 LittleLemonModal()
                 if showSearchField {
                     TextField("Search", text: $searchText)
@@ -29,6 +29,8 @@ struct Menu: View {
                         .cornerRadius(8)
                         .onDisappear {
                             self.showSearchField = false
+                            self.filter = ""
+                            self.searchText = ""
                         }
                 } else {
                     Image(systemName: "magnifyingglass")
@@ -37,7 +39,6 @@ struct Menu: View {
                             self.showSearchField.toggle()
                         }
                 }
-                
                 
                 FetchedObjects(predicate: buildPredicate(),
                                sortDescriptors: buildSortDescriptors())
@@ -91,16 +92,21 @@ struct Menu: View {
     }
     
     func buildPredicate() -> NSPredicate {
-        if filter.isEmpty {
-            if searchText.isEmpty {
-                return NSPredicate(value: true)
-            }
+        
+        //MARK: i want search to ignore category filter, this is on purpose
+        if(!searchText.isEmpty){
             return NSPredicate(format: "title CONTAINS[cd] %@", searchText)
-        } else {
+        }
+        
+        //MARK: filter only works if search field is empty, this is on purpose
+        if (!filter.isEmpty && searchText.isEmpty){
             return NSPredicate(format: "category = %@", filter)
         }
+        
+        return NSPredicate(value: true)
     }
     
+    //MARK: this function is important in order to not save duplicate data from the API call
     func exists(in context: NSManagedObjectContext, attributeValue: String) -> Bool {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Dish")
         fetchRequest.predicate = NSPredicate(format: "title = %@", attributeValue)
