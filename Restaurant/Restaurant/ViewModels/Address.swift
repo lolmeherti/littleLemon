@@ -13,9 +13,9 @@ let keyCountry = "Country"
 import SwiftUI
 
 struct Address: View {
-    @State var address:String = "Nice Street"
-    @State var city:String = "Stall"
-    @State var country:String = "Asoph"
+    @State var address:String = ""
+    @State var city:String = ""
+    @State var country:String = ""
     
     @State var validAddress = false
     var body: some View {

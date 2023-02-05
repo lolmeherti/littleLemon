@@ -60,7 +60,7 @@ struct Onboarding: View {
                             .shadow(radius: 2)
                             .frame(width: 350, height: 50)
                         
-                        Text("E-mail*")
+                        Text("E-mail(valid@emails.only)*")
                             .fontWeight(.bold)
                             .foregroundColor(.gray)
                         TextField("E-mail", text: $email)
