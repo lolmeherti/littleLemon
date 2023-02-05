@@ -19,9 +19,11 @@ struct Onboarding: View {
     
     @State var isLoggedIn = UserDefaults.standard.bool(forKey: keyIsLoggedIn)
     
-    @State var firstName = "asd"
-    @State var lastName = "asd"
-    @State var email = "asd@asd.com"
+    @State var firstName = ""
+    @State var lastName = ""
+    @State var email = ""
+    
+    @State var validRegistrationDetails = false
     
     var body: some View {
         NavigationView
@@ -31,8 +33,10 @@ struct Onboarding: View {
                 VStack
                 {
                     LittleLemonModal()
-                    
                     NavigationLink("", destination: Home(), isActive: $isLoggedIn)
+                        .hidden()
+                    
+                    NavigationLink("", destination: Address(), isActive: $validRegistrationDetails)
                         .hidden()
                     
                     VStack(alignment: .leading, spacing:20){
@@ -65,39 +69,48 @@ struct Onboarding: View {
                             .cornerRadius(10)
                             .shadow(radius: 2)
                             .frame(width: 350, height: 50)
-                    }
-                    
-                    
-                    Button("Register")
-                    {
-                        if(!firstName.isEmpty &&
-                           !lastName.isEmpty &&
-                           email.isEmail())
-                        {
-                            UserDefaults.standard.set(firstName, forKey: keyFirstName)
-                            UserDefaults.standard.set(lastName, forKey: keyLastName)
-                            UserDefaults.standard.set(email, forKey: keyEmail)
-                            UserDefaults.standard.set(true, forKey: keyIsLoggedIn)
-                            isLoggedIn = true
-                        } else {
-                            //form data  was incorrect
-                            print("bad form data")
+                        
+                        HStack{
+                            Spacer()
+                            Button("Next")
+                            {
+                                if(!firstName.isEmpty &&
+                                   !lastName.isEmpty &&
+                                   email.isEmail())
+                                {
+                                    UserDefaults.standard.set(firstName, forKey: keyFirstName)
+                                    UserDefaults.standard.set(lastName, forKey: keyLastName)
+                                    UserDefaults.standard.set(email, forKey: keyEmail)
+                                    
+                                    self.validRegistrationDetails = true
+                                } else {
+                                    //form data  was incorrect
+                                    print("bad form data")
+                                }
+                            }
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.blue)
+                            .cornerRadius(5)
+                            
+                            Spacer()
                         }
                     }
-                    .frame(width: UIScreen.main.bounds.width - 50, height: 50)
-                    .background(Color.blue)
-                    .cornerRadius(10)
-                    .shadow(radius: 5)
-                    .foregroundColor(.white)
-                    .padding(.top, 25)
-                    .fontWeight(.medium)
+                    .padding()
                 }
-                .ignoresSafeArea(.all)
-                
+                .onAppear
+                {
+                    clearRegistrationForm()
+                }
             }
-            
         }
         
+    }
+    func clearRegistrationForm()
+    {
+        self.firstName = ""
+        self.lastName = ""
+        self.email = ""
     }
 }
 
