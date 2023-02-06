@@ -72,46 +72,46 @@ struct UserProfile: View {
                             TextField("country", text: $country)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
                         }
-                        
-                    }.listStyle(PlainListStyle())
-                    HStack {
-                        Spacer()
-                        Button("Save") {
-                            
-                            if(!firstName.isEmpty &&
-                               !lastName.isEmpty &&
-                               email.isEmail() &&
-                               !address.isEmpty &&
-                               !city.isEmpty &&
-                               !country.isEmpty)
-                            {
-                                UserDefaults.standard.set(firstName, forKey: keyFirstName)
-                                UserDefaults.standard.set(lastName, forKey: keyLastName)
-                                UserDefaults.standard.set(email, forKey: keyEmail)
-                                UserDefaults.standard.set(address, forKey: keyAddress)
-                                UserDefaults.standard.set(city, forKey: keyCity)
-                                UserDefaults.standard.set(country, forKey: keyCountry)
-                            } else {
-                                //form data  was incorrect
-                                print("bad form data")
+                        HStack {
+                            Spacer()
+                            Button("Save") {
+                                
+                                if(!firstName.isEmpty &&
+                                   !lastName.isEmpty &&
+                                   email.isEmail() &&
+                                   !address.isEmpty &&
+                                   !city.isEmpty &&
+                                   !country.isEmpty)
+                                {
+                                    UserDefaults.standard.set(firstName, forKey: keyFirstName)
+                                    UserDefaults.standard.set(lastName, forKey: keyLastName)
+                                    UserDefaults.standard.set(email, forKey: keyEmail)
+                                    UserDefaults.standard.set(address, forKey: keyAddress)
+                                    UserDefaults.standard.set(city, forKey: keyCity)
+                                    UserDefaults.standard.set(country, forKey: keyCountry)
+                                } else {
+                                    //form data  was incorrect
+                                    print("bad form data")
+                                }
                             }
-                        }
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.blue)
-                        .cornerRadius(5)
-                        
-                        Button("Logout") {
-                            UserDefaults.standard.set(false, forKey: keyIsLoggedIn)
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.blue)
+                            .cornerRadius(5)
                             
-                            self.presentation.wrappedValue.dismiss()
+                            Button("Logout") {
+                                UserDefaults.standard.set(false, forKey: keyIsLoggedIn)
+                                
+                                self.presentation.wrappedValue.dismiss()
+                            }
+                            .foregroundColor(.white)
+                            .padding()
+                            .background(Color.red)
+                            .cornerRadius(5)
+                            Spacer()
                         }
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.red)
-                        .cornerRadius(5)
-                        Spacer()
-                    }
+                    }.listStyle(PlainListStyle())
+                    
                 }
             }
             
